@@ -1,8 +1,10 @@
 package com.shop.andreys.web;
 
 import com.shop.andreys.model.binding.UserLoginBindingModel;
+import com.shop.andreys.model.binding.UserRegisterBindingModel;
 import com.shop.andreys.model.service.UserServiceModel;
 import com.shop.andreys.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,15 +22,22 @@ import javax.validation.Valid;
 @RequestMapping("/users")
 public class UserController {
 
+    private final ModelMapper modelMapper;
+
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(ModelMapper modelMapper, UserService userService) {
+        this.modelMapper = modelMapper;
         this.userService = userService;
     }
 
     @GetMapping("/login")
-    public String getLoginForm(Model model) {
+    public String getLoginForm(Model model, HttpSession httpSession) {
+        // Security
+        if(httpSession.getAttribute("user") != null) {
+            return "redirect:/";
+        }
         if (!model.containsAttribute("userLoginBindingModel")) {
             model.addAttribute("userLoginBindingModel", new UserLoginBindingModel());
             model.addAttribute("notExists", false);
@@ -61,13 +70,30 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public String getRegisterForm() {
+    public String getRegisterForm(Model model, HttpSession httpSession) {
+        // Security
+        if(httpSession.getAttribute("user") != null) {
+            return "redirect:/";
+        }
+        if (!model.containsAttribute("userRegisterBindingModel")) {
+            model.addAttribute("userRegisterBindingModel", new UserRegisterBindingModel());
+        }
         return "register";
     }
 
     @PostMapping("/register")
-    public String confirmRegisterForm() {
-        return "redirect:/";
+    public String confirmRegisterForm(@Valid @ModelAttribute("userRegisterBindingModel")
+                                                  UserRegisterBindingModel userRegisterBindingModel,
+                                      BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors() || !userRegisterBindingModel.getPassword().equals(userRegisterBindingModel.getConfirmPassword())) {
+            redirectAttributes.addFlashAttribute("userRegisterBindingModel", userRegisterBindingModel);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.userRegisterBindingModel", bindingResult);
+            return "redirect:register";
+        }
+
+        this.userService.registerUser(this.modelMapper.map(userRegisterBindingModel, UserServiceModel.class));
+        return "redirect:login";
     }
 
     @GetMapping("/logout")

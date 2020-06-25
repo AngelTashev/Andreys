@@ -5,4 +5,6 @@ import com.shop.andreys.model.service.UserServiceModel;
 public interface UserService {
 
     UserServiceModel findByUsername(String username);
+
+    void registerUser(UserServiceModel userServiceModel);
 }

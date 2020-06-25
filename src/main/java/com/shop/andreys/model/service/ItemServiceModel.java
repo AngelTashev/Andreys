@@ -1,26 +1,21 @@
-package com.shop.andreys.model.entity;
+package com.shop.andreys.model.service;
 
+import com.shop.andreys.model.entity.Category;
+import com.shop.andreys.model.entity.Gender;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "items")
-public class Item extends BaseEntity {
+public class ItemServiceModel extends BaseServiceModel {
 
     private String name;
     private String description;
     private BigDecimal price;
-    private Category category;
+    private CategoryServiceModel category;
     private Gender gender;
 
-    public Item() {
-    }
-
     @Length(min = 2, message = "Item name length must be more than two characters!")
-    @Column(name = "name", unique = true)
     public String getName() {
         return name;
     }
@@ -30,7 +25,6 @@ public class Item extends BaseEntity {
     }
 
     @Length(min = 3, message = "Description length must be more than two characters!")
-    @Column(name = "description")
     public String getDescription() {
         return description;
     }
@@ -40,7 +34,6 @@ public class Item extends BaseEntity {
     }
 
     @Min(value = 0, message = "Item price must be more or equal to zero")
-    @Column(name = "price")
     public BigDecimal getPrice() {
         return price;
     }
@@ -49,16 +42,14 @@ public class Item extends BaseEntity {
         this.price = price;
     }
 
-    @ManyToOne
-    public Category getCategory() {
+    public CategoryServiceModel getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CategoryServiceModel category) {
         this.category = category;
     }
 
-    @Enumerated(EnumType.ORDINAL)
     public Gender getGender() {
         return gender;
     }

@@ -1,26 +1,22 @@
-package com.shop.andreys.model.entity;
+package com.shop.andreys.model.binding;
 
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "items")
-public class Item extends BaseEntity {
-
+public class ItemAddBindingModel {
+    
     private String name;
     private String description;
+    private String category;
+    private String gender;
     private BigDecimal price;
-    private Category category;
-    private Gender gender;
 
-    public Item() {
+    public ItemAddBindingModel() {
     }
 
     @Length(min = 2, message = "Item name length must be more than two characters!")
-    @Column(name = "name", unique = true)
     public String getName() {
         return name;
     }
@@ -30,7 +26,6 @@ public class Item extends BaseEntity {
     }
 
     @Length(min = 3, message = "Description length must be more than two characters!")
-    @Column(name = "description")
     public String getDescription() {
         return description;
     }
@@ -39,31 +34,28 @@ public class Item extends BaseEntity {
         this.description = description;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
     @Min(value = 0, message = "Item price must be more or equal to zero")
-    @Column(name = "price")
     public BigDecimal getPrice() {
         return price;
     }
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    @ManyToOne
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    @Enumerated(EnumType.ORDINAL)
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
     }
 }

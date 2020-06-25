@@ -2,6 +2,8 @@ package com.shop.andreys.service.impl;
 
 import com.shop.andreys.model.binding.CategoryAddBindingModel;
 import com.shop.andreys.model.entity.Category;
+import com.shop.andreys.model.entity.CategoryName;
+import com.shop.andreys.model.service.CategoryServiceModel;
 import com.shop.andreys.repository.CategoryRepository;
 import com.shop.andreys.service.CategoryService;
 import org.modelmapper.ModelMapper;
@@ -29,5 +31,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public boolean isRepositoryEmpty() {
         return this.categoryRepository.count() == 0;
+    }
+
+    @Override
+    public CategoryServiceModel getByName(String name) {
+        return this.modelMapper.map(this.categoryRepository.findByName(CategoryName.valueOf(name)).orElse(null), CategoryServiceModel.class);
     }
 }
